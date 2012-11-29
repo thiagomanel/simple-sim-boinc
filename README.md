@@ -1,4 +1,4 @@
 simple-sim-boinc
 ================
 
-BOINC simple simulator
+Description and how to

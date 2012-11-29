@@ -1,7 +1,8 @@
 bin/
 target/
 .metadata/
-.project
 .settings/
+.project
+.classpath
 *.swp
 *~

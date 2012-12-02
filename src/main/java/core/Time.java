@@ -16,14 +16,16 @@ public final class Time implements Comparable<Time> {
 	 */
 	public static final Time THE_FINAL_JUDGMENT = new Time(Long.MAX_VALUE, Unit.MICROSECONDS);
 
-	public enum Unit {SECONDS, MILLISECONDS, MICROSECONDS}
+	public enum Unit {HOURS, MINUTES, SECONDS, MILLISECONDS, MICROSECONDS}
 	
 	private final long timeMicroSeconds;
 
 	public Time(long time, Unit unit) {
 		switch(unit) {
-		case SECONDS: this.timeMicroSeconds = time * 1000000; break;
-		case MILLISECONDS: this.timeMicroSeconds = time * 1000; break;
+		case HOURS: this.timeMicroSeconds = time * 3600000000L; break;
+		case MINUTES: this.timeMicroSeconds = time * 60000000L; break;
+		case SECONDS: this.timeMicroSeconds = time * 1000000L; break;
+		case MILLISECONDS: this.timeMicroSeconds = time * 1000L; break;
 		case MICROSECONDS: this.timeMicroSeconds = time; break;
 		default:
 			throw new IllegalArgumentException("Impossible argument exception");

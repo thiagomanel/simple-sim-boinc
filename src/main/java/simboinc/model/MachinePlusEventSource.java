@@ -1,40 +1,53 @@
 package simboinc.model;
 
+import simboinc.ResultsLogger;
+import simboinc.event.DownloadInputFileAndExecuteEvent;
 import simboinc.event.DownloadInputFileEvent;
 import simboinc.event.ExecuteWorkunitEvent;
 import simboinc.event.SleepingEvent;
+import simboinc.event.WaitEvent;
 import core.Event;
 
 public class MachinePlusEventSource extends Machine {
-	protected static long currentTask = 0;
-	private int numberOfInputFiles = 0;
+	private static long currentTask = 0;
 	
-	public MachinePlusEventSource(String machineName, long limitOfTasks) {
+	private int numberOfInputFiles = 0;
+	private final ResultsLogger logger;
+	
+	public MachinePlusEventSource(String machineName, ResultsLogger logger, long limitOfTasks) {
 		super(machineName, limitOfTasks);
+		this.logger = logger;
 	}
 	
 	private Event processWorkunit() {
 		if(this.numberOfInputFiles <= 0) {
-			downloadInputFile().process();
+			return new DownloadInputFileAndExecuteEvent(this, logger, Long.toString(currentTask++));
 		}
-		this.numberOfInputFiles--;
-		return new ExecuteWorkunitEvent(this, Long.toString(currentTask++));
+
+		return new ExecuteWorkunitEvent(this, logger, Long.toString(currentTask++));
 	}
 	
 	private Event downloadInputFile() {
+		if(this.numberOfInputFiles >= limitOfTasks()) {
+			return new WaitEvent(this, logger);
+		}
+
 		this.numberOfInputFiles++;
-		return new DownloadInputFileEvent(this, Long.toString(currentTask));
+		return new DownloadInputFileEvent(this, logger, Long.toString(currentTask));
 	}
 	
 	private Event sleep() {
-		return new SleepingEvent(this);
+		return new SleepingEvent(this, logger);
 	}
 	
 	@Override
 	public Event getNextEvent() {
 		if(!thereIsMoreTasks()) {
+			logger.close();
 			return null;
 		}
+
+		generateMachineState();
 
 		switch(currentMachineState()) {
 			case IDLE:

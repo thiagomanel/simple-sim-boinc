@@ -1,22 +1,23 @@
 package simboinc.event;
 
+import simboinc.ResultsLogger;
 import simboinc.model.Machine;
-import core.Event;
 import core.Time;
 import core.Time.Unit;
 
-public class WaitEvent extends Event {
-	private final static Time scheduledTime = new Time(10L, Unit.MINUTES);
+public class WaitEvent extends SimEvent {
+	private final static Time scheduledTime = new Time(5L, Unit.MINUTES);
 	private final Machine machine;
 
-	public WaitEvent(Machine machine) {
-		super(scheduledTime);
+	public WaitEvent(Machine machine, ResultsLogger logger) {
+		super(scheduledTime, logger);
 		this.machine = machine;
 	}
 
 	@Override
 	public void process() {
-		System.out.println(String.format("[WAIT] machine=%s, state=%s, duration=%s", 
+		machine.addStateTime(scheduledTime);
+		log(String.format("[WAIT] machine=%s, state=%s, duration=%s", 
 				this.machine.machineName(), this.machine.currentMachineState(), 
 				super.getScheduledTime()));
 	}

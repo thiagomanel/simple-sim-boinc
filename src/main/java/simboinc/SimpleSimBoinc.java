@@ -13,6 +13,7 @@ public class SimpleSimBoinc {
 		Summarizer summarizer = new BoincSummarizer();
 		
 		Context context = initializer.initialize(null);
+		// TODO Patrick's code has constants for this.
 		Time emulationStart = new Time(0L, Unit.SECONDS);
 		Time emulationEnd = new Time(800000L, Unit.SECONDS);
 		

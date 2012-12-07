@@ -14,8 +14,12 @@ public class StartFetchEvent extends SimEvent {
 
 	@Override
 	public void process() {
-		machine().addNextEvent(new EndFetchEvent(machine(), COST.plus(getScheduledTime()), logger(), task()));
-		log(String.format("[START-FETCH] hostname=%s, task=%d, time=%s", machine().hostname(), task(), getScheduledTime()));
+		// FIXME it should not be here.
+		long thisTask = machine().nextTask();
+		if(machine().thereIsTasks()) {
+			machine().addNextEvent(new EndFetchEvent(machine(), COST.plus(getScheduledTime()), logger(), thisTask));
+			log(String.format("[START-FETCH] hostname=%s, task=%d, time=%s", machine().hostname(), thisTask, getScheduledTime()));
+		}
 	}
 
 }

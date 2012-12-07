@@ -19,7 +19,7 @@ public class BoincInitializer implements Initializer {
 
 	@Override
 	public Context initialize(Properties config) {
-		MachineEventSource machineEventSource = new MachineEventSource(State.IDLE, "teste1", loggerNormalMachine);
+		MachineEventSource machineEventSource = new MachineEventSource(State.IDLE, "teste1", loggerNormalMachine, 20L);
 		
 		EventSource[] eventSources = new EventSource[]{machineEventSource};
 		EventSourceMultiplexer eventSourceMultiplexer = new EventSourceMultiplexer(eventSources);

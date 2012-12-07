@@ -9,7 +9,7 @@ public class BoincSummarizer implements Summarizer {
 	public String summarize(Context context) {
 //		Machine machine1 = (Machine) context.get("machine1");
 //		Machine machine2 = (Machine) context.get("machine2");
-		return "TERMINOU";
+		return "FINISHED";
 		
 //		return String.format("Normal:\n%s\n" +
 //				"========================================\n" +

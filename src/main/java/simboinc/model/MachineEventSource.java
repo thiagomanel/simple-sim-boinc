@@ -1,56 +1,54 @@
 package simboinc.model;
 
-import simboinc.ResultsLogger;
-import simboinc.event.DownloadInputFileAndExecuteEvent;
-import simboinc.event.SleepingEvent;
-import simboinc.event.WaitEvent;
-import core.Event;
+import java.util.PriorityQueue;
 
-public class MachineEventSource extends Machine {
-	private final ResultsLogger logger;
+import simboinc.ResultsLogger;
+import simboinc.event.SimEvent;
+import simboinc.event.WaitingEvent;
+import simboinc.event.machine.StateChangeEvent;
+import core.Event;
+import core.EventSource;
+import core.Time;
+import core.Time.Unit;
+
+public class MachineEventSource implements EventSource {
+	private final String hostname;
 	
-	protected static long currentTask = 0;
+	private State state;
+	private PriorityQueue<SimEvent> nextEvents;
 	
-	public MachineEventSource(String machineName, ResultsLogger logger, long limitOfTasks) {
-		super(machineName, limitOfTasks);
-		this.logger = logger;
+	public enum State {
+		IDLE,
+		ACTIVE
 	}
 	
-	private Event processWorkunit() {
-		return new DownloadInputFileAndExecuteEvent(this, logger, Long.toString(currentTask++));
+	public MachineEventSource(State state, String hostname, ResultsLogger logger) {
+		this.state = state;
+		this.hostname = hostname;
+		
+		nextEvents = new PriorityQueue<SimEvent>();
+		nextEvents.add(new StateChangeEvent(this, new Time(0L, Unit.MICROSECONDS), logger));
+		nextEvents.add(new WaitingEvent(this, new Time(1L, Unit.MICROSECONDS), logger, 0L));
 	}
 	
-	private Event waitIdleness() {
-		return new WaitEvent(this, logger);
+	public void setState(State state) {
+		this.state = state;
 	}
 	
-	private Event sleep() {
-		return new SleepingEvent(this, logger);
+	public void addNextEvent(SimEvent nextEvent) {
+		nextEvents.add(nextEvent);
+	}
+	
+	public String hostname() {
+		return hostname;
+	}
+	
+	public boolean isIdle() {
+		return State.IDLE == state;	
 	}
 	
 	@Override
 	public Event getNextEvent() {
-		if(!thereIsMoreTasks()) {
-			logger.close();
-			return null;
-		}
-
-		generateMachineState();
-
-		switch(currentMachineState()) {
-			case IDLE:
-				return processWorkunit();
-			case ACTIVE:
-				return waitIdleness();
-			case SLEEP:
-				return sleep();
-			default:
-				throw new IllegalStateException("Invalid state");
-		}
-	}
-
-	@Override
-	protected long currentTask() {
-		return currentTask;
+		return nextEvents.poll();
 	}
 }

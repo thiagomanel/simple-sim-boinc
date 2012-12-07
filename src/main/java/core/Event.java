@@ -28,6 +28,8 @@ public abstract class Event implements Comparable<Event> {
 		this.scheduledTime = scheduledTime;
 	}
 
+	public abstract void process();
+
 	public Time getScheduledTime() {
 		return scheduledTime;
 	}
@@ -62,6 +64,5 @@ public abstract class Event implements Comparable<Event> {
 			return false;
 		return true;
 	}
-
-	public abstract void process();
+	
 }

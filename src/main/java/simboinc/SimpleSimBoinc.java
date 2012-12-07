@@ -4,6 +4,8 @@ import core.Context;
 import core.EventScheduler;
 import core.Initializer;
 import core.Summarizer;
+import core.Time;
+import core.Time.Unit;
 
 public class SimpleSimBoinc {
 	public static void main(String[] args) {
@@ -11,8 +13,10 @@ public class SimpleSimBoinc {
 		Summarizer summarizer = new BoincSummarizer();
 		
 		Context context = initializer.initialize(null);
+		Time emulationStart = new Time(0L, Unit.SECONDS);
+		Time emulationEnd = new Time(800000L, Unit.SECONDS);
 		
-		EventScheduler.setup(context.getEventSourceMultiplexer());
+		EventScheduler.setup(emulationStart, emulationEnd, context.getEventSourceMultiplexer());
 		try {
 			EventScheduler.start();
 		} catch (Throwable t) {

@@ -20,7 +20,7 @@ public class StateChangeEvent extends SimEvent {
 
 	@Override
 	public void process() {
-		if(machine().thereIsTasks()) {
+		if(!machine().thereIsTasks()) {
 			return;
 		}
 		Random random = new Random();

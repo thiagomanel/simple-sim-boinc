@@ -33,7 +33,7 @@ public class MachineEventSource implements EventSource {
 		
 		nextEvents = new PriorityQueue<SimEvent>();
 		nextEvents.add(new StateChangeEvent(this, new Time(0L, Unit.MICROSECONDS), logger));
-		nextEvents.add(new WaitingEvent(this, new Time(1L, Unit.MICROSECONDS), logger, 0L));
+		nextEvents.add(new WaitingEvent(this, new Time(0L, Unit.MICROSECONDS), logger, 0L));
 	}
 	
 	public boolean thereIsTasks() {

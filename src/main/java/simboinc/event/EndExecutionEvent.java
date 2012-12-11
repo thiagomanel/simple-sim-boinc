@@ -1,18 +1,20 @@
 package simboinc.event;
 
 import simboinc.ResultsLogger;
-import simboinc.model.MachineEventSource;
+import simboinc.model.BoincMachine;
+import simboinc.model.WorkUnit;
 import core.Time;
 
 public class EndExecutionEvent extends SimEvent {
-	public EndExecutionEvent(MachineEventSource machine, Time scheduledTime, ResultsLogger logger, long task) {
-		super(scheduledTime, logger, machine, task);
+	public EndExecutionEvent(BoincMachine machine, Time scheduledTime, ResultsLogger logger, WorkUnit workUnit) {
+		super(scheduledTime, logger, machine, workUnit);
 	}
 
 	@Override
 	public void process() {
-		machine().addNextEvent(new Done(machine(), getScheduledTime(), logger(), task()));
-		log(String.format("[END-EXECUTION] hostname=%s, task=%d, time=%s", machine().hostname(), task(), getScheduledTime()));
+		log(String.format("type=end-execution, state=%s, hostname=%s, task=%d, time=%s", 
+				machine().state(), machine().hostname(), task().id(), getScheduledTime()));
+		machine().addNextEvent(new FinishedWorkUnitEvent(machine(), getScheduledTime(), logger(), task()));
 	}
 
 }

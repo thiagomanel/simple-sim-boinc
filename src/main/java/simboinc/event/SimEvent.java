@@ -3,26 +3,23 @@ package simboinc.event;
 import core.Event;
 import core.Time;
 import simboinc.ResultsLogger;
-import simboinc.model.MachineEventSource;
+import simboinc.model.BoincMachine;
+import simboinc.model.WorkUnit;
 
 public abstract class SimEvent extends Event {
 	private final ResultsLogger logger;
-	private final MachineEventSource machine;
-	private long task;
+	private final BoincMachine machine;
+	private final WorkUnit workUnit;
 	
-	protected SimEvent(Time scheduledTime, ResultsLogger logger, MachineEventSource machine, long task) {
+	protected SimEvent(Time scheduledTime, ResultsLogger logger, BoincMachine machine, WorkUnit workUnit) {
 		super(scheduledTime);
 		this.logger = logger;
 		this.machine = machine;
-		this.task = task;
+		this.workUnit = workUnit;
 	}
 	
-	protected long task() {
-		return task;
-	}
-	
-	protected long newTask() {
-		return ++task;
+	protected WorkUnit task() {
+		return workUnit;
 	}
 	
 	protected void log(String content) {
@@ -33,7 +30,7 @@ public abstract class SimEvent extends Event {
 		return logger;
 	}
 	
-	protected MachineEventSource machine() {
+	protected BoincMachine machine() {
 		return machine;
 	}
 

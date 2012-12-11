@@ -1,21 +1,25 @@
 package simboinc.event;
 
 import simboinc.ResultsLogger;
-import simboinc.model.MachineEventSource;
+import simboinc.model.BoincMachine;
+import simboinc.model.WorkUnit;
 import core.Time;
-import core.Time.Unit;
 
 public class StartExecutionEvent extends SimEvent {
-	private final static Time COST = new Time(600L, Unit.SECONDS);
 	
-	public StartExecutionEvent(MachineEventSource machine, Time scheduledTime, ResultsLogger logger, long task) {
-		super(scheduledTime, logger, machine, task);
+	public StartExecutionEvent(BoincMachine machine, Time scheduledTime, ResultsLogger logger, WorkUnit workUnit) {
+		super(scheduledTime, logger, machine, workUnit);
 	}
 
 	@Override
 	public void process() {
-		machine().addNextEvent(new EndExecutionEvent(machine(), COST.plus(getScheduledTime()), logger(), task()));
-		log(String.format("[START-EXECUTION] hostname=%s, task=%d, time=%s", machine().hostname(), task(), getScheduledTime()));
+		log(String.format("type=start-execution, state=%s, hostname=%s, task=%d, time=%s", 
+				machine().state(), machine().hostname(), task().id(), getScheduledTime()));
+		machine().addNextEvent(new EndExecutionEvent(machine(), scheduleTimeToEnd(), logger(), task()));
+	}
+
+	private Time scheduleTimeToEnd() {
+		return task().timeOfExecution().plus(getScheduledTime());
 	}
 
 }

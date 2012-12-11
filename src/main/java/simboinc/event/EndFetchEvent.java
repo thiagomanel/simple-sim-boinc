@@ -1,19 +1,21 @@
 package simboinc.event;
 
 import simboinc.ResultsLogger;
-import simboinc.model.MachineEventSource;
+import simboinc.model.BoincMachine;
+import simboinc.model.WorkUnit;
 import core.Time;
 
 public class EndFetchEvent extends SimEvent {
 	
-	public EndFetchEvent(MachineEventSource machine, Time scheduledTime, ResultsLogger logger, long task) {
-		super(scheduledTime, logger, machine, task);
+	public EndFetchEvent(BoincMachine machine, Time scheduledTime, ResultsLogger logger, WorkUnit workUnit) {
+		super(scheduledTime, logger, machine, workUnit);
 	}
 
 	@Override
 	public void process() {
+		log(String.format("type=end-fetch, state=%s, hostname=%s, task=%d, time=%s", 
+				machine().state(), machine().hostname(), task().id(), getScheduledTime()));
 		machine().addNextEvent(new StartExecutionEvent(machine(), getScheduledTime(), logger(), task()));
-		log(String.format("[END-FETCH] hostname=%s, task=%d, time=%s", machine().hostname(), task(), getScheduledTime()));
 	}
 
 }
